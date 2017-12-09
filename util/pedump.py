@@ -87,14 +87,14 @@ class PeHeader(DosHeader):
 		dos_header = DosHeader.__repr__(self, *args, **kwargs)
 		return dos_header + '''
 		**** Pe Header ****
-		Signature: 0x%08x
-		Machine: 0x%04x
-		NumberOfSections: 0x%04x
-		TimeDataStamp: 0x%08x, %s
-		PointerToSymbolTable: 0x%08x
-		NumberOfSymbols: 0x%08x
-		SizeOfOptionalHeader: 0x%04x
-		Characteristics: 0x%04x
+		Signature: 0x%08X
+		Machine: 0x%04X
+		NumberOfSections: 0x%04X
+		TimeDataStamp: 0x%08X, %s
+		PointerToSymbolTable: 0x%08X
+		NumberOfSymbols: 0x%08X
+		SizeOfOptionalHeader: 0x%04X
+		Characteristics: 0x%04X
 		''' % (
 			self.Signature, self.Machine, self.NumberOfSections, self.TimeDateStamp, time.ctime(self.TimeDateStamp),
 			self.PointerToSymbolTable, self.NumberOfSymbols, self.SizeOfOptionalHeader, self.Characteristics
