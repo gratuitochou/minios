@@ -9,6 +9,7 @@
 			
 '''
 
+import time
 import struct
 import binascii
 
@@ -41,24 +42,24 @@ class DosHeader(object):
 	def __repr__(self, *args, **kwargs):
 		return '''
 		**** Dos Header ****
-		e_magic: 0x%04X,
-		e_cblp: 0x%04X,
-		e_cp: 0x%04X,
-		e_crlc: 0x%04X,
-		e_cparhdr: 0x%04X,
-		e_minialloc: 0x%04X,
-		e_maxalloc: 0x%04X,
-		e_ss: 0x%04X,
-		e_sp: 0x%04X,
-		e_csum: 0x%04X,
-		e_ip: 0x%04X,
-		e_cs: 0x%04X,
-		e_lfarlc: 0x%04X,
-		e_ovno: 0x%04X,
-		e_res: 0x%016X,
-		e_oemid: 0x%04X,
-		e_oeminfo: 0x%04X,
-		e_res2: 0x%s,
+		e_magic: 0x%04X
+		e_cblp: 0x%04X
+		e_cp: 0x%04X
+		e_crlc: 0x%04X
+		e_cparhdr: 0x%04X
+		e_minialloc: 0x%04X
+		e_maxalloc: 0x%04X
+		e_ss: 0x%04X
+		e_sp: 0x%04X
+		e_csum: 0x%04X
+		e_ip: 0x%04X
+		e_cs: 0x%04X
+		e_lfarlc: 0x%04X
+		e_ovno: 0x%04X
+		e_res: 0x%016X
+		e_oemid: 0x%04X
+		e_oeminfo: 0x%04X
+		e_res2: 0x%s
 		e_lfanew: 0x%08X
 		''' %(self.e_magic, self.e_cblp, self.e_cp, self.e_crlc, self.e_cparhdr, 
 			self.e_minalloc, self.e_maxalloc, self.e_ss, self.e_sp, self.e_csum,
@@ -86,9 +87,17 @@ class PeHeader(DosHeader):
 		dos_header = DosHeader.__repr__(self, *args, **kwargs)
 		return dos_header + '''
 		**** Pe Header ****
-		Signature: 0x%04x
+		Signature: 0x%08x
+		Machine: 0x%04x
+		NumberOfSections: 0x%04x
+		TimeDataStamp: 0x%08x, %s
+		PointerToSymbolTable: 0x%08x
+		NumberOfSymbols: 0x%08x
+		SizeOfOptionalHeader: 0x%04x
+		Characteristics: 0x%04x
 		''' % (
-			self.Signature
+			self.Signature, self.Machine, self.NumberOfSections, self.TimeDateStamp, time.ctime(self.TimeDateStamp),
+			self.PointerToSymbolTable, self.NumberOfSymbols, self.SizeOfOptionalHeader, self.Characteristics
 			)
 
 
