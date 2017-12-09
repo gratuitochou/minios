@@ -36,10 +36,6 @@ class DosHeader(object):
 		self.e_lfanew = struct.unpack("I", data[60:64])[0]
 		
 	
-	def __getattribute1__(self, name):
-		if name == "e_magic":
-			return hex(object.__getattribute__(self, name))
-		return object.__getattribute__(self, name)
 	
 	def __repr__(self, *args, **kwargs):
 		return '''
@@ -85,11 +81,6 @@ class PeHeader(DosHeader):
 		self.Characteristics = struct.unpack("H", data[self.e_lfanew + 22:self.e_lfanew + 24])[0]
 
 
-
-fp = "/Users/gratuitochow/CodingLife/mypro/minios/util/winpe.exe"
-with open(fp, "rb") as f:
-	d = DosHeader(f.read(0x40))
-	print d
 
 
 
