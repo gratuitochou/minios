@@ -10,6 +10,7 @@
 '''
 
 import struct
+import binascii
 
 class DosHeader(object):
 	def __init__(self, data):
@@ -39,30 +40,30 @@ class DosHeader(object):
 	
 	def __repr__(self, *args, **kwargs):
 		return '''
-		**** Dos Header ***
-		e_magic: 0x%02X,
-		e_cblp: 0x%02X,
-		e_cp: 0x%02X,
-		e_crlc: 0x%02X,
-		e_cparhdr: 0x%02X,
-		e_minialloc: 0x%02X,
-		e_maxalloc: 0x%02X,
-		e_ss: 0x%02X,
-		e_sp: 0x%02X,
-		e_csum: 0x%02X,
-		e_ip: 0x%02X,
-		e_cs: 0x%02X,
-		e_lfarlc: 0x%02X,
-		e_ovno: 0x%02X,
-		e_res: 0x%04X,
-		e_oemid: 0x%02X,
-		e_oeminfo: 0x%02X,
-		e_res2: %s,
-		e_lfanew: 0x%02X
+		**** Dos Header ****
+		e_magic: 0x%04X,
+		e_cblp: 0x%04X,
+		e_cp: 0x%04X,
+		e_crlc: 0x%04X,
+		e_cparhdr: 0x%04X,
+		e_minialloc: 0x%04X,
+		e_maxalloc: 0x%04X,
+		e_ss: 0x%04X,
+		e_sp: 0x%04X,
+		e_csum: 0x%04X,
+		e_ip: 0x%04X,
+		e_cs: 0x%04X,
+		e_lfarlc: 0x%04X,
+		e_ovno: 0x%04X,
+		e_res: 0x%016X,
+		e_oemid: 0x%04X,
+		e_oeminfo: 0x%04X,
+		e_res2: 0x%s,
+		e_lfanew: 0x%08X
 		''' %(self.e_magic, self.e_cblp, self.e_cp, self.e_crlc, self.e_cparhdr, 
 			self.e_minalloc, self.e_maxalloc, self.e_ss, self.e_sp, self.e_csum,
 			self.e_ip, self.e_cs, self.e_lfarlc, self.e_ovno, self.e_res, self.e_oemid,
-			self.e_oeminfo, self.e_res2, self.e_lfanew)
+			self.e_oeminfo, binascii.hexlify(self.e_res2), self.e_lfanew)
 
 
 
@@ -71,7 +72,7 @@ class PeHeader(DosHeader):
 		super(PeHeader, self).__init__(data)
 		
 		#COFF Header
-		self.Signature = struct.unpack("I", data[self.e_lfanew:4])[0]
+		self.Signature = struct.unpack("I", data[self.e_lfanew:self.e_lfanew + 4])[0]
 		self.Machine = struct.unpack("H", data[self.e_lfanew + 4:self.e_lfanew + 6])[0]
 		self.NumberOfSections = struct.unpack("H", data[self.e_lfanew + 6:self.e_lfanew + 8])[0]
 		self.TimeDateStamp = struct.unpack("I", data[self.e_lfanew + 8:self.e_lfanew + 12])[0]
@@ -81,9 +82,23 @@ class PeHeader(DosHeader):
 		self.Characteristics = struct.unpack("H", data[self.e_lfanew + 22:self.e_lfanew + 24])[0]
 
 
+	def __repr__(self, *args, **kwargs):
+		dos_header = DosHeader.__repr__(self, *args, **kwargs)
+		return dos_header + '''
+		**** Pe Header ****
+		Signature: 0x%04x
+		''' % (
+			self.Signature
+			)
 
 
 
+#test
+if __name__ == "__main__":
+	fp = "winpe.exe"
+	with open(fp, "rb") as f:
+		obj = PeHeader(f.read())
+	print obj
 
 
 
